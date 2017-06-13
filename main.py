@@ -9,30 +9,37 @@ import patientRegister as patientReg
 
 #******************try-1
 class App:
+    modality = 0
+
     def __init__(self, master):
         frame = Frame(master)
         frame.pack()
-        self.button = Button(frame, text="Browse Directory", command=self.getPatient, width=15, padx=20).pack()
+        Button(frame, text="Browse Directory", command=self.getPatient, width=15, padx=20).pack()
         self.label = Label(frame, text='Select modality').pack(side=BOTTOM)
-        self.selection = IntVar()
 
+        App.modality = IntVar()
         self.T1 = Radiobutton(frame,
                               text="T1 weighted",
                               padx=20,
-                              variable=self.selection,
+                              variable=App.modality,
                               value=1).pack(anchor=W)
         self.T2 = Radiobutton(frame,
                               text="T2 weighted",
                               padx=20,
-                              variable=self.selection,
+                              variable=App.modality,
                               value=2).pack(anchor=W)
+
+        Button(frame, text="Next", command=self.next, width=15, padx=20).pack()
 
     def getPatient(self):
         patientDirectory = patientReg.Register().getPatient()
         print(patientDirectory)
 
+    def next(self):
+        print(str(App.modality.get()))
+
 root = Tk()
-root.geometry("1000x1000")
+root.geometry("500x500")
 app = App(root)
 root.mainloop()
 
