@@ -10,33 +10,45 @@ import patientRegister as patientReg
 #******************try-1
 class App:
     modality = 0
+    T1_modality = False
+    T2_modality = False
 
     def __init__(self, master):
         frame = Frame(master)
-        frame.pack()
-        Button(frame, text="Browse Directory", command=self.getPatient, width=15, padx=20).pack()
-        self.label = Label(frame, text='Select modality').pack(side=BOTTOM)
+        frame.grid()
+        Label(frame, text='Select patient directory: ', padx = 50).grid(row=0, column=0)
+        Button(frame, text="Browse Directory", command=self.getPatient, width=15, padx=50).grid(row=0, column=1)
+        #self.label = Label(frame, text='Select modality').pack(side=BOTTOM)
 
-        App.modality = IntVar()
-        self.T1 = Radiobutton(frame,
-                              text="T1 weighted",
-                              padx=20,
-                              variable=App.modality,
-                              value=1).pack(anchor=W)
-        self.T2 = Radiobutton(frame,
-                              text="T2 weighted",
-                              padx=20,
-                              variable=App.modality,
-                              value=2).pack(anchor=W)
-
-        Button(frame, text="Next", command=self.next, width=15, padx=20).pack()
+        # App.modality = IntVar()
+        App.T1_modality = BooleanVar()
+        App.T2_modality = BooleanVar()
+        Label(frame, text='Select modality: ', padx = 50).grid(row = 2, column = 0)
+        # self.T1 = Radiobutton(frame,
+        #                       text="T1 weighted",
+        #                       padx=20,
+        #                       variable=App.modality,
+        #                       value=1).grid(row = 2, column = 0)
+        # self.T2 = Radiobutton(frame,
+        #                       text="T2 weighted",
+        #                       padx=20,
+        #                       variable=App.modality,
+        #                       value=2).grid(row = 3, column = 0)
+        Checkbutton(frame,
+                    text="T1 weighted",
+                    variable=App.T1_modality).grid(row = 3, column = 0)
+        Checkbutton(frame,
+                    text="T2 weighted",
+                    variable=App.T2_modality).grid(row = 4, column = 0)
+        Button(frame, text="Next", command=self.next, width=15, padx=20).grid(row = 5, column = 1)
 
     def getPatient(self):
         patientDirectory = patientReg.Register().getPatient()
         print(patientDirectory)
 
     def next(self):
-        print(str(App.modality.get()))
+        print(str(App.T1_modality.get()))
+        print(str(App.T2_modality.get()))
 
 root = Tk()
 root.geometry("500x500")
