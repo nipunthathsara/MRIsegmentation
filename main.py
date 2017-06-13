@@ -3,57 +3,85 @@ import numpy
 import SimpleITK
 import matplotlib.pyplot as plt
 import helpers.viewHelper as help
-from Tkinter import *
+import Tkinter as tk
 import patientRegister as patientReg
 
 
 #******************try-1
-class App:
-    modality = 0
+
+
+class App(tk.Tk):
+    def __init__(self, *args, **kwargs):
+        tk.Tk.__init__(self, *args, **kwargs)
+        tk.Tk.wm_title(self, 'Brain Tumor Detector')
+        container = tk.Frame(self)
+        container.pack(side="top", fill="both", expand=True)
+        container.grid_rowconfigure(0, weight=1)
+        container.grid_columnconfigure(0, weight=1)
+
+        self.frames = {}
+
+        for F in (StartingPage, Denoiser):
+            frame = F(container, self)
+
+            self.frames[F] = frame
+
+            frame.grid(row=0, column=0, sticky="nsew")
+
+        self.show_frame(StartingPage)
+
+    def show_frame(self, cont):
+        frame = self.frames[cont]
+        frame.tkraise()
+
+
+class StartingPage (tk.Frame):
+    patientDirectory = ''
+    #modality = 0
     T1_modality = False
     T2_modality = False
+    pubController = None#in order to make controoler available in other methods
 
-    def __init__(self, master):
-        frame = Frame(master)
-        frame.grid()
-        Label(frame, text='Select patient directory: ', padx = 50).grid(row=0, column=0)
-        Button(frame, text="Browse Directory", command=self.getPatient, width=15, padx=50).grid(row=0, column=1)
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        tk.Label(self, text='Select patient directory: ', padx = 50).grid(row=0, column=0)
+        tk.Button(self, text="Browse Directory", command=self.getPatient, width=15, padx=20).grid(row=0, column=1)
         #self.label = Label(frame, text='Select modality').pack(side=BOTTOM)
 
-        # App.modality = IntVar()
-        App.T1_modality = BooleanVar()
-        App.T2_modality = BooleanVar()
-        Label(frame, text='Select modality: ', padx = 50).grid(row = 2, column = 0)
-        # self.T1 = Radiobutton(frame,
-        #                       text="T1 weighted",
-        #                       padx=20,
-        #                       variable=App.modality,
-        #                       value=1).grid(row = 2, column = 0)
-        # self.T2 = Radiobutton(frame,
-        #                       text="T2 weighted",
-        #                       padx=20,
-        #                       variable=App.modality,
-        #                       value=2).grid(row = 3, column = 0)
-        Checkbutton(frame,
+        StartingPage.T1_modality = tk.BooleanVar()
+        StartingPage.T2_modality = tk.BooleanVar()
+        tk.Label(self, text='Select modality: ', padx = 50).grid(row = 2, column = 0)
+        tk.Checkbutton(self,
                     text="T1 weighted",
-                    variable=App.T1_modality).grid(row = 3, column = 0)
-        Checkbutton(frame,
+                    variable=StartingPage.T1_modality).grid(row = 3, column = 0)
+        tk.Checkbutton(self,
                     text="T2 weighted",
-                    variable=App.T2_modality).grid(row = 4, column = 0)
-        Button(frame, text="Next", command=self.next, width=15, padx=20).grid(row = 5, column = 1)
+                    variable=StartingPage.T2_modality).grid(row = 4, column = 0)
+        tk.Button(self, text="Next", command=self.next, width=15, padx=20).grid(row = 5, column = 1)
+        StartingPage.pubController = controller
 
     def getPatient(self):
-        patientDirectory = patientReg.Register().getPatient()
-        print(patientDirectory)
+        StartingPage.patientDirectory = patientReg.Register().getPatient()
+        #print(App.patientDirectory)
 
     def next(self):
-        print(str(App.T1_modality.get()))
-        print(str(App.T2_modality.get()))
+        # print(str(App.T1_modality.get()))
+        # print(str(App.T2_modality.get()))
+        print (StartingPage.patientDirectory)
+        StartingPage.pubController.show_frame(Denoiser)
 
-root = Tk()
-root.geometry("500x500")
-app = App(root)
-root.mainloop()
+
+class Denoiser(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        tk.Label(self, text='second page: ', padx=50).grid(row=0, column=0)
+
+    def show(self):
+        print('ddddddddddddd')
+
+app = App()
+app.geometry("500x250")
+app.mainloop()
 
 #**************end of try
 
