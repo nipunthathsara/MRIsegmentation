@@ -89,11 +89,24 @@ class Denoiser(tk.Frame):
         tk.Button(self, text="Previous", command=self.onClickPrev, width=15, padx=20).grid(row=0, column=4)
 
         Denoiser.smoothingMethod = tk.StringVar()
-        tk.Label(self, text = 'Selct Smoothing Method').grid(row = 3, column = 4, sticky = 'ew')
-        tk.OptionMenu(self, Denoiser.smoothingMethod, 'N4Bias Field Corrention', 'Curvature Flow').grid(row = 3, column = 5, columnspan = 2, sticky= 'ew')
-        tk.Button(self, text="Apply filter", command=self.onClickApplyFilter, width=15, padx=20).grid(row=4, column=6)
+        tk.Label(self, text = 'Select Smoothing Method').grid(row = 1, column = 4, sticky = 'ew')
+        tk.OptionMenu(self, Denoiser.smoothingMethod, 'N4Bias Field Corrention', 'Curvature Flow').grid(row = 1, column = 5, sticky= 'ew')
+        tk.Button(self, text="Apply filter", command=self.onClickApplyFilter, width=15, padx=20).grid(row=1, column=6)
 
+        tvFrame = tk.Frame(self)
+        tvFrame.grid(row = 0, column = 0, columnspan= 4, rowspan = 5)
 
+        f = Figure(figsize=(5, 5), dpi=100)
+        a = f.add_subplot(111)
+        a.plot([1, 2, 3, 4, 5, 6, 7, 8], [5, 6, 1, 3, 8, 9, 3, 5])
+
+        canvas = FigureCanvasTkAgg(f, tvFrame)
+        canvas.show()
+        canvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
+
+        toolbar = NavigationToolbar2TkAgg(canvas, tvFrame)
+        toolbar.update()
+        canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
 
 
@@ -122,7 +135,7 @@ class Denoiser(tk.Frame):
 
 
 app = App()
-app.geometry("500x250")
+app.geometry("1000x500")
 app.mainloop()
 
 #**************end of try
