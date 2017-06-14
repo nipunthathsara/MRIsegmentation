@@ -1,6 +1,8 @@
 import SimpleITK
 import matplotlib.pyplot as plt
 
+
+
 def sitk_show(img, title=None, margin=0.0, dpi=40):
     nda = SimpleITK.GetArrayFromImage(img)
     # spacing = img.GetSpacing()

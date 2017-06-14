@@ -5,15 +5,19 @@ import matplotlib.pyplot as plt
 import helpers.viewHelper as help
 import Tkinter as tk
 import patientRegister as patientReg
+import matplotlib
+matplotlib.use("TkAgg")
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
+from matplotlib.figure import Figure
 
 
 #******************try-1
-
 
 class App(tk.Tk):
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
         tk.Tk.wm_title(self, 'Brain Tumor Detector')
+
         container = tk.Frame(self)
         container.pack(side="top", fill="both", expand=True)
         container.grid_rowconfigure(0, weight=1)
@@ -67,17 +71,55 @@ class StartingPage (tk.Frame):
     def next(self):
         # print(str(App.T1_modality.get()))
         # print(str(App.T2_modality.get()))
-        print (StartingPage.patientDirectory)
+        #print (StartingPage.patientDirectory)
         StartingPage.pubController.show_frame(Denoiser)
 
 
 class Denoiser(tk.Frame):
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
-        tk.Label(self, text='second page: ', padx=50).grid(row=0, column=0)
+    sliceNumber = ''
+    smoothingMethod = ''
 
-    def show(self):
-        print('ddddddddddddd')
+    def __init__(self, parent, controller):
+        Denoiser.sliceNumber = tk.StringVar()
+        Denoiser.sliceNumber.set('25')
+        tk.Frame.__init__(self, parent)
+
+        tk.Button(self, text="Next", command=self.onClickNext, width=15, padx=20).grid(row=0, column=6)
+        self.number = tk.Entry(self, textvariable = Denoiser.sliceNumber, width=15).grid(row=0, column=5)
+        tk.Button(self, text="Previous", command=self.onClickPrev, width=15, padx=20).grid(row=0, column=4)
+
+        Denoiser.smoothingMethod = tk.StringVar()
+        tk.Label(self, text = 'Selct Smoothing Method').grid(row = 3, column = 4, sticky = 'ew')
+        tk.OptionMenu(self, Denoiser.smoothingMethod, 'N4Bias Field Corrention', 'Curvature Flow').grid(row = 3, column = 5, columnspan = 2, sticky= 'ew')
+        tk.Button(self, text="Apply filter", command=self.onClickApplyFilter, width=15, padx=20).grid(row=4, column=6)
+
+
+
+
+
+    def onClickNext(self):
+        current = int(str(Denoiser.sliceNumber.get())) + 1
+        Denoiser.sliceNumber.set(current)
+
+    def onClickPrev(self):
+        current = int(str(Denoiser.sliceNumber.get())) - 1
+        Denoiser.sliceNumber.set(current)
+
+    def onClickApplyFilter(self):
+        print('smoothning')
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 app = App()
 app.geometry("500x250")
