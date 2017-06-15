@@ -106,35 +106,12 @@ class Denoiser(tk.Frame):
         tvFrame = tk.Frame(self)#creating new frame for matplotlib, since grid and pack cannot be used in same frame
         tvFrame.grid(row = 0, column = 0, columnspan= 4, rowspan = 5)
 
-        #ggg
+
         filenameT1 = "./dataset/mr_T1/patient_109_mr_T1.mhd"
         idxSlice = 26
         imgT1Original = SimpleITK.ReadImage(filenameT1)
-        #help.sitk_show(SimpleITK.Tile(imgT1Original[:, :, idxSlice], imgT2Original[:, :, idxSlice], (2, 1, 0))
-        ndArray = SimpleITK.GetArrayFromImage(imgT1Original[:, :, idxSlice])
-        title = None
-        margin = 0.0
-        dpi = 40
-        figsize = (1 + margin) * ndArray.shape[0] / dpi, (1 + margin) * ndArray.shape[1] / dpi
-        extent = (0, ndArray.shape[1], ndArray.shape[0], 0)
-        fig = matplotlib.pyplot.figure(figsize=figsize, dpi=dpi)
-        ax = fig.add_axes([margin, margin, 1 - 2 * margin, 1 - 2 * margin])
-        ax.imshow(ndArray)
 
-        #ggg
-
-
-        # f = Figure(figsize=(5, 5), dpi=100)
-        # a = f.add_subplot(111)
-        # a.plot([1, 2, 3, 4, 5, 6, 7, 8], [5, 6, 1, 3, 8, 9, 3, 5])
-
-        canvas = FigureCanvasTkAgg(fig, tvFrame)
-        canvas.show()
-        canvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
-
-        toolbar = NavigationToolbar2TkAgg(canvas, tvFrame)
-        toolbar.update()
-        canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        help.show(imgT1Original[:, :, idxSlice], tvFrame)
 
 
 
