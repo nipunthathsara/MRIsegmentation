@@ -13,6 +13,8 @@ from matplotlib.figure import Figure
 
 #******************try-1
 
+
+
 class App(tk.Tk):
     def __init__(self, *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
@@ -50,7 +52,7 @@ class StartingPage (tk.Frame):
         tk.Frame.__init__(self, parent)
         tk.Label(self, text='Select patient directory: ', padx = 50).grid(row=0, column=0)
         tk.Button(self, text="Browse Directory", command=self.getPatient, width=15, padx=20).grid(row=0, column=1)
-        #self.label = Label(frame, text='Select modality').pack(side=BOTTOM)
+
 
         StartingPage.T1_modality = tk.BooleanVar()
         StartingPage.T2_modality = tk.BooleanVar()
@@ -66,18 +68,23 @@ class StartingPage (tk.Frame):
 
     def getPatient(self):
         StartingPage.patientDirectory = patientReg.Register().getPatient()
-        #print(App.patientDirectory)
+        #print(StartingPage.patientDirectory)
 
     def next(self):
         # print(str(App.T1_modality.get()))
         # print(str(App.T2_modality.get()))
-        #print (StartingPage.patientDirectory)
+        print (StartingPage.patientDirectory)
         StartingPage.pubController.show_frame(Denoiser)
 
 
 class Denoiser(tk.Frame):
     sliceNumber = ''
     smoothingMethod = ''
+    t1_check = False
+    t2_check = False
+
+    t1_original = None
+    t2_original = None
 
     def __init__(self, parent, controller):
         Denoiser.sliceNumber = tk.StringVar()
@@ -88,15 +95,17 @@ class Denoiser(tk.Frame):
         self.number = tk.Entry(self, textvariable = Denoiser.sliceNumber, width=15).grid(row=0, column=5)
         tk.Button(self, text="Previous", command=self.onClickPrev, width=15, padx=20).grid(row=0, column=4)
 
-        t1_check = tk.BooleanVar()
-        t2_check = tk.BooleanVar()
+        Denoiser.t1_check = tk.BooleanVar()
+        Denoiser.t2_check = tk.BooleanVar()
+
         tk.Label(self, text='Select modality: ', padx=50).grid(row=1, column=4)
         tk.Checkbutton(self,
                        text="T1 weighted",
-                       variable=t1_check).grid(row=2, column=4)
+                       variable=Denoiser.t1_check).grid(row=2, column=4)
         tk.Checkbutton(self,
                        text="T2 weighted",
-                       variable=t2_check).grid(row=2, column=5)
+                       variable=Denoiser.t2_check).grid(row=2, column=5)
+        tk.Button(self, text="Load Modality", command=self.onClickLoad, width=15, padx=20).grid(row=2, column=6)
 
         Denoiser.smoothingMethod = tk.StringVar()
         tk.Label(self, text = 'Select Smoothing Method').grid(row = 3, column = 4, sticky = 'ew')
@@ -123,24 +132,20 @@ class Denoiser(tk.Frame):
         current = int(str(Denoiser.sliceNumber.get())) - 1
         Denoiser.sliceNumber.set(current)
 
+    def onClickLoad(self):
+        if(Denoiser.t1_check.get()):
+            Denoiser.t1_original = patientReg.Register().getModality(StartingPage.patientDirectory, '_T1.')
+            #print(str(Denoiser.t1_original))
+        if(Denoiser.t2_check.get()):
+            Denoiser.t2_original = patientReg.Register().getModality(StartingPage.patientDirectory, '_T2.')
+
     def onClickApplyFilter(self):
         print('smoothning')
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 app = App()
-app.geometry("1000x500")
+app.geometry("1000x530")
 app.mainloop()
 
 #**************end of try

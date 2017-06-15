@@ -1,6 +1,7 @@
 import tkFileDialog
 import tkMessageBox
 import os
+import dataFeed.dataFeeder
 
 
 class Register:
@@ -21,13 +22,18 @@ class Register:
                 tkMessageBox.showerror("Open Source File", "Failed to read file \n'%s'" % patientDirectory)
 
 
-    def getModality(selfself, patientDir, modality):
+    def getModality(selfself, patientDir, modality, slice = 25):
         if(patientDir):
             try:
                 subDirs = [dI for dI in os.listdir(patientDir) if os.path.isdir(os.path.join(patientDir, dI))]
                 for mod in subDirs:
-                    if(mod == modality):
-                        return mod
+                    if(modality in mod):
+                        subDir = patientDir + '/' + mod
+                        print(subDir + 'fffff')
+                        originalImage =  dataFeed.dataFeeder.Feed().readImage(subDir, mod)
+                        return originalImage
+                        #print(patientDir + '/' + mod + 'dddddd')
+
 
                 return tkMessageBox.showerror("Open Source File", "Modality not found in \n'%s'" % patientDir)
             except:
