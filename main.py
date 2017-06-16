@@ -10,6 +10,8 @@ matplotlib.use("TkAgg")
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
 from matplotlib.figure import Figure
 
+import smoothers.curvatureFlow as cFlow
+
 
 #******************try-1
 
@@ -85,6 +87,8 @@ class Denoiser(tk.Frame):
 
     t1_original = None
     t2_original = None
+    t1_smoothned = None
+    t2_smoothned = None
     tvFrame = None
     helpObj = None
 
@@ -147,8 +151,7 @@ class Denoiser(tk.Frame):
         if (Denoiser.t2_check.get()):
             help.show(Denoiser.t2_original[:, :, int(Denoiser.sliceNumber.get())], Denoiser.tvFrame)
         if ((Denoiser.t2_check.get()) and (Denoiser.t1_check.get())):
-            help.show(SimpleITK.Tile(Denoiser.t2_original[:, :, int(Denoiser.sliceNumber.get())],
-                                     Denoiser.t1_original[:, :, int(Denoiser.sliceNumber.get())]), Denoiser.tvFrame)
+            help.show(SimpleITK.Tile(Denoiser.t2_original[:, :, int(Denoiser.sliceNumber.get())], Denoiser.t1_original[:, :, int(Denoiser.sliceNumber.get())]), Denoiser.tvFrame)
 
     def onClickLoad(self):
         Denoiser.tvFrame = None
@@ -171,7 +174,32 @@ class Denoiser(tk.Frame):
         Denoiser.t1_original = patientReg.Register().getModality(StartingPage.patientDirectory, '_T1.')
 
     def onClickApplyFilter(self):
-        print('smoothning')
+        if(Denoiser.smoothingMethod):
+            method = 0 if (str(Denoiser.smoothingMethod.get()) == 'Curvature Flow') else 1 #curvature flow is 0
+            if(method == 0): #Curvature flow
+                Denoiser.tvFrame = None
+                Denoiser.tvFrame = tk.Frame(self)
+                Denoiser.tvFrame.grid(row=0, column=0, columnspan=4, rowspan=5)
+                if(Denoiser.t1_check.get() and not Denoiser.t2_check.get()):#if T1 selected
+                    Denoiser.t1_smoothned = cFlow.CurvatureFlow().applycFlow(Denoiser.t1_original)
+                    help.show(Denoiser.t1_smoothned[:, :, int(Denoiser.sliceNumber.get())], Denoiser.tvFrame)
+                elif (Denoiser.t2_check.get() and not Denoiser.t1_check.get()):#if T2
+                    Denoiser.t2_smoothned = cFlow.CurvatureFlow().applycFlow(Denoiser.t2_original)
+                    help.show(Denoiser.t2_smoothned[:, :, int(Denoiser.sliceNumber.get())], Denoiser.tvFrame)
+                elif (Denoiser.t2_check.get() and Denoiser.t1_check.get()):#if Both T1 and T2
+                    Denoiser.t1_smoothned = cFlow.CurvatureFlow().applycFlow(Denoiser.t1_original)
+                    Denoiser.t2_smoothned = cFlow.CurvatureFlow().applycFlow(Denoiser.t2_original)
+                    help.show(SimpleITK.Tile(Denoiser.t1_smoothned[:, :, int(Denoiser.sliceNumber.get())], Denoiser.t2_smoothned[:, :, int(Denoiser.sliceNumber.get())]), Denoiser.tvFrame)
+
+            elif (method == 1):#N4BFCorrection
+                if (Denoiser.t1_check.get() and not Denoiser.t2_check.get()): #if T1 selected
+                    Denoiser.t1_smoothned = cFlow.CurvatureFlow().applycFlow()
+                elif (Denoiser.t2_check.get() and not Denoiser.t1_check.get()):
+                    Denoiser.t2_smoothned = cFlow.CurvatureFlow().applycFlow()
+                elif (Denoiser.t2_check.get() and Denoiser.t1_check.get()):
+                    Denoiser.t1_smoothned = cFlow.CurvatureFlow().applycFlow()
+                    Denoiser.t2_smoothned = cFlow.CurvatureFlow().applycFlow()
+
 
 
 

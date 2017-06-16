@@ -20,6 +20,7 @@ def show(image, frame, title = None, margin = 0.0, dpi = 100):
     # set fixed size to image
     extent = (0, ndArray.shape[1], ndArray.shape[0], 0)
     fig = plt.figure(figsize=figsize, dpi=dpi)
+    plt.set_cmap("gray")
     ax = fig.add_axes([margin, margin, 1 - 2 * margin, 1 - 2 * margin])
     ax.imshow(ndArray)
     canvas = FigureCanvasTkAgg(fig, frame)

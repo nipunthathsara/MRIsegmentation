@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="059b547b-2bd4-437d-8ddf-bd22847b3fbe" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/helpers/viewHelper.py" afterPath="$PROJECT_DIR$/helpers/viewHelper.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main.py" afterPath="$PROJECT_DIR$/main.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/smoothers/curvatureFlow.py" afterPath="$PROJECT_DIR$/smoothers/curvatureFlow.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -20,8 +22,8 @@
       <file leaf-file-name="main.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="96">
-              <caret line="150" column="59" lean-forward="false" selection-start-line="150" selection-start-column="59" selection-end-line="150" selection-end-column="59" />
+            <state relative-caret-position="168">
+              <caret line="189" column="85" lean-forward="false" selection-start-line="189" selection-start-column="85" selection-end-line="189" selection-end-column="85" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -32,8 +34,20 @@
       <file leaf-file-name="curvatureFlow.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/smoothers/curvatureFlow.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="102">
-              <caret line="6" column="0" lean-forward="false" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
+            <state relative-caret-position="68">
+              <caret line="4" column="24" lean-forward="false" selection-start-line="4" selection-start-column="24" selection-end-line="4" selection-end-column="24" />
+              <folding>
+                <element signature="e#0#16#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="N4BFC.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/smoothers/N4BFC.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="85">
+              <caret line="5" column="16" lean-forward="true" selection-start-line="5" selection-start-column="16" selection-end-line="5" selection-end-column="16" />
               <folding>
                 <element signature="e#0#16#0" expanded="true" />
               </folding>
@@ -44,8 +58,8 @@
       <file leaf-file-name="viewHelper.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/helpers/viewHelper.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="68">
-              <caret line="10" column="0" lean-forward="true" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
+            <state relative-caret-position="272">
+              <caret line="22" column="22" lean-forward="false" selection-start-line="22" selection-start-column="22" selection-end-line="22" selection-end-column="22" />
               <folding>
                 <element signature="e#0#16#0" expanded="true" />
               </folding>
@@ -105,8 +119,10 @@
         <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/patientRegister.py" />
         <option value="$PROJECT_DIR$/dataFeed/dataFeeder.py" />
-        <option value="$PROJECT_DIR$/smoothers/curvatureFlow.py" />
         <option value="$PROJECT_DIR$/helpers/viewHelper.py" />
+        <option value="$PROJECT_DIR$/helpers/N4BFC.py" />
+        <option value="$PROJECT_DIR$/smoothers/N4BFC.py" />
+        <option value="$PROJECT_DIR$/smoothers/curvatureFlow.py" />
         <option value="$PROJECT_DIR$/main.py" />
       </list>
     </option>
@@ -197,6 +213,7 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\FYP\Code\MRIsegmentation\smoothers" />
       <recent name="C:\Users\Thathsara\PycharmProjects\FYP_1\helpers" />
     </key>
   </component>
@@ -881,16 +898,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/smoothers/curvatureFlow.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="6" column="0" lean-forward="false" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#16#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/patientRegister.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="289">
@@ -903,8 +910,28 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/helpers/viewHelper.py">
       <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="272">
+          <caret line="22" column="22" lean-forward="false" selection-start-line="22" selection-start-column="22" selection-end-line="22" selection-end-column="22" />
+          <folding>
+            <element signature="e#0#16#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/smoothers/N4BFC.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="5" column="16" lean-forward="true" selection-start-line="5" selection-start-column="16" selection-end-line="5" selection-end-column="16" />
+          <folding>
+            <element signature="e#0#16#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/smoothers/curvatureFlow.py">
+      <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="68">
-          <caret line="10" column="0" lean-forward="true" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
+          <caret line="4" column="24" lean-forward="false" selection-start-line="4" selection-start-column="24" selection-end-line="4" selection-end-column="24" />
           <folding>
             <element signature="e#0#16#0" expanded="true" />
           </folding>
@@ -913,8 +940,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="96">
-          <caret line="150" column="59" lean-forward="false" selection-start-line="150" selection-start-column="59" selection-end-line="150" selection-end-column="59" />
+        <state relative-caret-position="168">
+          <caret line="189" column="85" lean-forward="false" selection-start-line="189" selection-start-column="85" selection-end-line="189" selection-end-column="85" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
           </folding>
