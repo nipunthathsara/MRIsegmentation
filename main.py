@@ -110,7 +110,7 @@ class Denoiser(tk.Frame):
         tk.Checkbutton(self,
                        text="T2 weighted",
                        variable=Denoiser.t2_check).grid(row=2, column=5)
-        tk.Button(self, text="Load Modality", command=self.onClickLoad(), width=15, padx=20).grid(row=2, column=6)
+        tk.Button(self, text="Load Modality", command=self.onClickLoad, width=15, padx=20).grid(row=2, column=6)
 
         Denoiser.smoothingMethod = tk.StringVar()
         tk.Label(self, text = 'Select Smoothing Method').grid(row = 3, column = 4, sticky = 'ew')
@@ -138,9 +138,26 @@ class Denoiser(tk.Frame):
     def onClickLoad(self):
         if(Denoiser.t1_check.get()):
             Denoiser.t1_original = patientReg.Register().getModality(StartingPage.patientDirectory, '_T1.')
-            # print(str(Denoiser.t1_original))
+            print(str(Denoiser.t1_original))
+            Denoiser.tvFrame = None
+            Denoiser.tvFrame = tk.Frame(self)
+            Denoiser.tvFrame.grid(row=0, column=0, columnspan=4, rowspan=5)
+            help.show(Denoiser.t1_original[:, :, int(Denoiser.sliceNumber.get())], Denoiser.tvFrame)
         if(Denoiser.t2_check.get()):
             Denoiser.t2_original = patientReg.Register().getModality(StartingPage.patientDirectory, '_T2.')
+            Denoiser.tvFrame = None
+            Denoiser.tvFrame = tk.Frame(self)
+            Denoiser.tvFrame.grid(row=0, column=0, columnspan=4, rowspan=5)
+            help.show(Denoiser.t2_original[:, :, int(Denoiser.sliceNumber.get())], Denoiser.tvFrame)
+        if((Denoiser.t2_check.get()) and (Denoiser.t1_check.get())):
+            Denoiser.t1_original = patientReg.Register().getModality(StartingPage.patientDirectory, '_T1.')
+            Denoiser.t2_original = patientReg.Register().getModality(StartingPage.patientDirectory, '_T2.')
+            Denoiser.tvFrame = None
+            Denoiser.tvFrame = tk.Frame(self)
+            Denoiser.tvFrame.grid(row=0, column=0, columnspan=4, rowspan=5)
+            help.show(SimpleITK.Tile(Denoiser.t2_original[:, :, int(Denoiser.sliceNumber.get())], Denoiser.t1_original[:, :, int(Denoiser.sliceNumber.get())], Denoiser.tvFrame)
+
+
 
     def populateDefaults(self):
         Denoiser.t1_original = patientReg.Register().getModality(StartingPage.patientDirectory, '_T1.')
