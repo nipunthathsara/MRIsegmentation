@@ -71,7 +71,7 @@ class StartingPage (tk.Frame):
         #print(StartingPage.patientDirectory)
 
     def next(self):
-        # print(str(App.T1_modality.get()))
+        # print(str(App..0T1_modality.get()))
         # print(str(App.T2_modality.get()))
         print (StartingPage.patientDirectory)
         StartingPage.pubController.show_frame(Denoiser)
@@ -80,16 +80,21 @@ class StartingPage (tk.Frame):
 class Denoiser(tk.Frame):
     sliceNumber = ''
     smoothingMethod = ''
-    t1_check = False
+    t1_check = True
     t2_check = False
 
     t1_original = None
     t2_original = None
+    tvFrame = None
+    helpObj = None
 
     def __init__(self, parent, controller):
         Denoiser.sliceNumber = tk.StringVar()
         Denoiser.sliceNumber.set('25')
         tk.Frame.__init__(self, parent)
+
+        Denoiser.tvFrame = tk.Frame(self)  # creating new frame for matplotlib, since grid and pack cannot be used in same frame
+        Denoiser.tvFrame.grid(row=0, column=0, columnspan=4, rowspan=5)
 
         tk.Button(self, text="Next", command=self.onClickNext, width=15, padx=20).grid(row=0, column=6)
         self.number = tk.Entry(self, textvariable = Denoiser.sliceNumber, width=15).grid(row=0, column=5)
@@ -105,28 +110,26 @@ class Denoiser(tk.Frame):
         tk.Checkbutton(self,
                        text="T2 weighted",
                        variable=Denoiser.t2_check).grid(row=2, column=5)
-        tk.Button(self, text="Load Modality", command=self.onClickLoad, width=15, padx=20).grid(row=2, column=6)
+        tk.Button(self, text="Load Modality", command=self.onClickLoad(), width=15, padx=20).grid(row=2, column=6)
 
         Denoiser.smoothingMethod = tk.StringVar()
         tk.Label(self, text = 'Select Smoothing Method').grid(row = 3, column = 4, sticky = 'ew')
         tk.OptionMenu(self, Denoiser.smoothingMethod, 'N4Bias Field Corrention', 'Curvature Flow').grid(row = 3, column = 5, sticky= 'ew')
         tk.Button(self, text="Apply filter", command=self.onClickApplyFilter, width=15, padx=20).grid(row=3, column=6)
 
-        tvFrame = tk.Frame(self)#creating new frame for matplotlib, since grid and pack cannot be used in same frame
-        tvFrame.grid(row = 0, column = 0, columnspan= 4, rowspan = 5)
-
-
-        filenameT1 = "./dataset/mr_T1/patient_109_mr_T1.mhd"
-        idxSlice = 26
-        imgT1Original = SimpleITK.ReadImage(filenameT1)
-
-        help.show(imgT1Original[:, :, idxSlice], tvFrame)
+        filenameT1 = "./dataset/mr_T1/patient_109_mr_T1.mhd" #add default jpg url here
+        Denoiser.t1_original = SimpleITK.ReadImage(filenameT1)
+        help.show(Denoiser.t1_original[:, :, int(Denoiser.sliceNumber.get())], Denoiser.tvFrame)
 
 
 
     def onClickNext(self):
         current = int(str(Denoiser.sliceNumber.get())) + 1
         Denoiser.sliceNumber.set(current)
+        Denoiser.tvFrame = None
+        Denoiser.tvFrame = tk.Frame(self)  # creating new frame for matplotlib, since grid and pack cannot be used in same frame
+        Denoiser.tvFrame.grid(row=0, column=0, columnspan=4, rowspan=5)
+        help.show(Denoiser.t1_original[:, :, int(Denoiser.sliceNumber.get())], Denoiser.tvFrame)
 
     def onClickPrev(self):
         current = int(str(Denoiser.sliceNumber.get())) - 1
@@ -135,9 +138,12 @@ class Denoiser(tk.Frame):
     def onClickLoad(self):
         if(Denoiser.t1_check.get()):
             Denoiser.t1_original = patientReg.Register().getModality(StartingPage.patientDirectory, '_T1.')
-            #print(str(Denoiser.t1_original))
+            # print(str(Denoiser.t1_original))
         if(Denoiser.t2_check.get()):
             Denoiser.t2_original = patientReg.Register().getModality(StartingPage.patientDirectory, '_T2.')
+
+    def populateDefaults(self):
+        Denoiser.t1_original = patientReg.Register().getModality(StartingPage.patientDirectory, '_T1.')
 
     def onClickApplyFilter(self):
         print('smoothning')
@@ -150,7 +156,7 @@ app.mainloop()
 
 #**************end of try
 
-filenameT1 = "./dataset/mr_T1/patient_109_mr_T1.mhd"
+""""filenameT1 = "./dataset/mr_T1/patient_109_mr_T1.mhd"
 filenameT2 = "./dataset/mr_T2/patient_109_mr_T2.mhd"
 
 idxSlice = 26
@@ -173,7 +179,7 @@ imgT2Smooth = SimpleITK.CurvatureFlow(image1=imgT2Original,timeStep=0.125,number
 
 help.sitk_show(SimpleITK.Tile(imgT1Smooth[:, :, idxSlice],
                          imgT2Smooth[:, :, idxSlice],
-                         (2, 1, 0)))
+                         (2, 1, 0)))"""""
 
 
 
