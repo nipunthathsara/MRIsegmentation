@@ -129,33 +129,41 @@ class Denoiser(tk.Frame):
         Denoiser.tvFrame = None
         Denoiser.tvFrame = tk.Frame(self)  # creating new frame for matplotlib, since grid and pack cannot be used in same frame
         Denoiser.tvFrame.grid(row=0, column=0, columnspan=4, rowspan=5)
-        help.show(Denoiser.t1_original[:, :, int(Denoiser.sliceNumber.get())], Denoiser.tvFrame)
+        if (Denoiser.t1_check.get()):
+            help.show(Denoiser.t1_original[:, :, int(Denoiser.sliceNumber.get())], Denoiser.tvFrame)
+        if (Denoiser.t2_check.get()):
+            help.show(Denoiser.t2_original[:, :, int(Denoiser.sliceNumber.get())], Denoiser.tvFrame)
+        if ((Denoiser.t2_check.get()) and (Denoiser.t1_check.get())):
+            help.show(SimpleITK.Tile(Denoiser.t2_original[:, :, int(Denoiser.sliceNumber.get())],Denoiser.t1_original[:, :, int(Denoiser.sliceNumber.get())]), Denoiser.tvFrame)
 
     def onClickPrev(self):
         current = int(str(Denoiser.sliceNumber.get())) - 1
         Denoiser.sliceNumber.set(current)
+        Denoiser.tvFrame = None
+        Denoiser.tvFrame = tk.Frame(self)
+        Denoiser.tvFrame.grid(row=0, column=0, columnspan=4, rowspan=5)
+        if (Denoiser.t1_check.get()):
+            help.show(Denoiser.t1_original[:, :, int(Denoiser.sliceNumber.get())], Denoiser.tvFrame)
+        if (Denoiser.t2_check.get()):
+            help.show(Denoiser.t2_original[:, :, int(Denoiser.sliceNumber.get())], Denoiser.tvFrame)
+        if ((Denoiser.t2_check.get()) and (Denoiser.t1_check.get())):
+            help.show(SimpleITK.Tile(Denoiser.t2_original[:, :, int(Denoiser.sliceNumber.get())],
+                                     Denoiser.t1_original[:, :, int(Denoiser.sliceNumber.get())]), Denoiser.tvFrame)
 
     def onClickLoad(self):
-        if(Denoiser.t1_check.get()):
+        Denoiser.tvFrame = None
+        Denoiser.tvFrame = tk.Frame(self)
+        Denoiser.tvFrame.grid(row=0, column=0, columnspan=4, rowspan=5)
+        if(Denoiser.t1_check.get() and not Denoiser.t2_check.get()):
             Denoiser.t1_original = patientReg.Register().getModality(StartingPage.patientDirectory, '_T1.')
-            print(str(Denoiser.t1_original))
-            Denoiser.tvFrame = None
-            Denoiser.tvFrame = tk.Frame(self)
-            Denoiser.tvFrame.grid(row=0, column=0, columnspan=4, rowspan=5)
             help.show(Denoiser.t1_original[:, :, int(Denoiser.sliceNumber.get())], Denoiser.tvFrame)
-        if(Denoiser.t2_check.get()):
+        if(Denoiser.t2_check.get() and not Denoiser.t1_check.get()):
             Denoiser.t2_original = patientReg.Register().getModality(StartingPage.patientDirectory, '_T2.')
-            Denoiser.tvFrame = None
-            Denoiser.tvFrame = tk.Frame(self)
-            Denoiser.tvFrame.grid(row=0, column=0, columnspan=4, rowspan=5)
             help.show(Denoiser.t2_original[:, :, int(Denoiser.sliceNumber.get())], Denoiser.tvFrame)
         if((Denoiser.t2_check.get()) and (Denoiser.t1_check.get())):
             Denoiser.t1_original = patientReg.Register().getModality(StartingPage.patientDirectory, '_T1.')
             Denoiser.t2_original = patientReg.Register().getModality(StartingPage.patientDirectory, '_T2.')
-            Denoiser.tvFrame = None
-            Denoiser.tvFrame = tk.Frame(self)
-            Denoiser.tvFrame.grid(row=0, column=0, columnspan=4, rowspan=5)
-            help.show(SimpleITK.Tile(Denoiser.t2_original[:, :, int(Denoiser.sliceNumber.get())], Denoiser.t1_original[:, :, int(Denoiser.sliceNumber.get())], Denoiser.tvFrame)
+            help.show(SimpleITK.Tile(Denoiser.t2_original[:, :, int(Denoiser.sliceNumber.get())], Denoiser.t1_original[:, :, int(Denoiser.sliceNumber.get())]), Denoiser.tvFrame)
 
 
 
