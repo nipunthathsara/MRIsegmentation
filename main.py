@@ -29,7 +29,7 @@ class App(tk.Tk):
 
         self.frames = {}
 
-        for F in (StartingPage, Denoiser):
+        for F in (StartingPage, Denoiser, Segmentor):
             frame = F(container, self)
 
             self.frames[F] = frame
@@ -41,6 +41,7 @@ class App(tk.Tk):
     def show_frame(self, cont):
         frame = self.frames[cont]
         frame.tkraise()
+        return frame
 
 
 class StartingPage (tk.Frame):
@@ -79,6 +80,7 @@ class StartingPage (tk.Frame):
         StartingPage.pubController.show_frame(Denoiser)
 
 
+
 class Denoiser(tk.Frame):
     sliceNumber = ''
     smoothingMethod = ''
@@ -91,11 +93,13 @@ class Denoiser(tk.Frame):
     t2_smoothned = None
     tvFrame = None
     helpObj = None
+    pubController = None
 
     def __init__(self, parent, controller):
         Denoiser.sliceNumber = tk.StringVar()
         Denoiser.sliceNumber.set('25')
         tk.Frame.__init__(self, parent)
+        Denoiser.pubController = controller
 
         Denoiser.tvFrame = tk.Frame(self)  # creating new frame for matplotlib, since grid and pack cannot be used in same frame
         Denoiser.tvFrame.grid(row=0, column=0, columnspan=4, rowspan=5)
@@ -120,6 +124,7 @@ class Denoiser(tk.Frame):
         tk.Label(self, text = 'Select Smoothing Method').grid(row = 3, column = 4, sticky = 'ew')
         tk.OptionMenu(self, Denoiser.smoothingMethod, 'N4Bias Field Corrention', 'Curvature Flow').grid(row = 3, column = 5, sticky= 'ew')
         tk.Button(self, text="Apply filter", command=self.onClickApplyFilter, width=15, padx=20).grid(row=3, column=6)
+        tk.Button(self, text="Proceed", command=self.onClickProceed, width=15, padx=20).grid(row=4, column=6)
 
         filenameT1 = "./dataset/mr_T1/patient_109_mr_T1.mhd" #add default jpg url here
         Denoiser.t1_original = SimpleITK.ReadImage(filenameT1)
@@ -200,7 +205,43 @@ class Denoiser(tk.Frame):
                     Denoiser.t1_smoothned = cFlow.CurvatureFlow().applycFlow()
                     Denoiser.t2_smoothned = cFlow.CurvatureFlow().applycFlow()
 
+    def onClickProceed(self):
+        frame = Denoiser.pubController.show_frame(Segmentor)
+        frame.t1_smoothned = Denoiser.t1_smoothned
+        frame.t2_smoothned = Denoiser.t2_smoothned
+        frame.sliceNumber = int(Denoiser.sliceNumber.get())
+        frame.t1_checked = Denoiser.t1_check.get()
+        frame.t2_checked = Denoiser.t2_check.get()
 
+
+
+
+class Segmentor (tk.Frame):
+    tvFrame = None
+
+    def __init__(self, parent, controller):
+        self.t1_smoothned = None
+        self.t2_smoothned = None
+        self.sliceNumber = 0
+        self.t1_checked = False
+        self.t2_checked = False
+        self.modToSegment = ''
+
+        tk.Frame.__init__(self, parent)
+
+        Segmentor.tvFrame = tk.Frame(self)
+        Segmentor.tvFrame.grid(row=0, column=0, columnspan=4, rowspan=5)
+
+        self.modToSegment = tk.StringVar()
+        tk.Label(self, text='Select modality to continue: ', padx=50).grid(row=1, column=4)
+        tk.OptionMenu(self, self.modToSegment, 'T1 weighted', 'T2 weighted', 'T1 and T2').grid(row=1, column=5, sticky='ew')
+        tk.Button(self, text="Load", command=self.onClickLoad, width=15, padx=20).grid(row=2, column=5)
+
+        # self.number = tk.Entry(self, textvariable = Denoiser.sliceNumber, width=15).grid(row=0, column=5)
+        # tk.Button(self, text="Previous", command=self.onClickPrev, width=15, padx=20).grid(row=0, column=4)
+
+    def onClickLoad(self):
+        help.show(self.t1_smoothned[:, :, self.sliceNumber], Segmentor.tvFrame)
 
 
 app = App()
