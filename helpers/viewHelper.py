@@ -8,6 +8,7 @@ from matplotlib.figure import Figure
 
 import Tkinter as tk
 
+seeds = None
 
 def show(image, frame, title = None, margin = 0.0, dpi = 100):
     toolbar = None
@@ -17,6 +18,7 @@ def show(image, frame, title = None, margin = 0.0, dpi = 100):
     fig = None
     ndArray = SimpleITK.GetArrayFromImage(image)
     figsize = (5,5)#(1 + margin) * ndArray.shape[0] / dpi, (1 + margin) * ndArray.shape[1] / dpi
+    # figsize = (1 + margin) * ndArray.shape[0] / dpi, (1 + margin) * ndArray.shape[1] / dpi
     # set fixed size to image
     extent = (0, ndArray.shape[1], ndArray.shape[0], 0)
     fig = plt.figure(figsize=figsize, dpi=dpi)
@@ -30,6 +32,20 @@ def show(image, frame, title = None, margin = 0.0, dpi = 100):
     toolbar = NavigationToolbar2TkAgg(canvas, frame)
     toolbar.update()
     canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+    return canvas
 
+def callBack(event):
+    print event.x, event.y
+    seeds.append((event.xdata, event.ydata))
+    if len(seeds) == 5:
+        return seeds
+
+def markSeeds(canvas):
+    data = canvas.callbacks.connect('button_press_event', callBack)
+    canvas.mpl_disconnect(data)
+    return data
+
+# def callback(event):
+#     print event.xdata, event.ydata
 
 

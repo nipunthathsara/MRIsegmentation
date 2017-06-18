@@ -9,8 +9,10 @@ import matplotlib
 matplotlib.use("TkAgg")
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
 from matplotlib.figure import Figure
+import tkMessageBox
 
 import smoothers.curvatureFlow as cFlow
+# import regions.segmentator as sgmnttr
 
 
 #******************try-1
@@ -220,12 +222,19 @@ class Segmentor (tk.Frame):
     tvFrame = None
 
     def __init__(self, parent, controller):
+        self.canvas = None
         self.t1_smoothned = None
         self.t2_smoothned = None
         self.sliceNumber = 0
         self.t1_checked = False
         self.t2_checked = False
         self.modToSegment = ''
+        self.selectedMatter = ''
+        self.image = None
+        self.seeds = []
+
+        self.grayLabel = 1
+        self.whiteLabel = 2
 
         tk.Frame.__init__(self, parent)
 
@@ -236,12 +245,51 @@ class Segmentor (tk.Frame):
         tk.Label(self, text='Select modality to continue: ', padx=50).grid(row=1, column=4)
         tk.OptionMenu(self, self.modToSegment, 'T1 weighted', 'T2 weighted', 'T1 and T2').grid(row=1, column=5, sticky='ew')
         tk.Button(self, text="Load", command=self.onClickLoad, width=15, padx=20).grid(row=2, column=5)
+        tk.Button(self, text="Mark Seeds", command=self.onClickMarkSeeds, width=15, padx=20).grid(row=3, column=5)
 
-        # self.number = tk.Entry(self, textvariable = Denoiser.sliceNumber, width=15).grid(row=0, column=5)
-        # tk.Button(self, text="Previous", command=self.onClickPrev, width=15, padx=20).grid(row=0, column=4)
+        self.selectedMatter = tk.StringVar()
+        tk.Label(self, text='Select criteria: ', padx=50).grid(row=4, column=4)
+        tk.OptionMenu(self, self.selectedMatter, 'Gray Matter', 'White matter', 'All').grid(row=4, column=5, sticky='ew')
+        tk.Button(self, text="Segment", command=lambda: self.onClickSegement(str(self.modToSegment.get()), str(self.selectedMatter.get())), width=15, padx=20).grid(row=4, column=6)
+
 
     def onClickLoad(self):
-        help.show(self.t1_smoothned[:, :, self.sliceNumber], Segmentor.tvFrame)
+        try:
+            if (str(self.modToSegment.get()) == 'T1 weighted'):
+                self.canvas = help.show(self.t1_smoothned[:, :, self.sliceNumber], Segmentor.tvFrame)
+                self.image = self.t1_smoothned
+            elif (str(self.modToSegment.get()) == 'T2 weighted'):
+                self.canvas = help.show(self.t2_smoothned[:, :, self.sliceNumber], Segmentor.tvFrame)
+                self.image = self.t2_smoothned
+            elif (str(self.modToSegment.get()) == 'T1 and T2'):
+                # self.canvas = help.show(SimpleITK.Tile(self.t1_smoothned[:, :, self.sliceNumber], self.t2_smoothned[:, :, self.sliceNumber]), Segmentor.tvFrame)
+                self.canvas = help.show(self.t1_smoothned[:, :, self.sliceNumber], Segmentor.tvFrame)#display only one, otherwise frame resizes
+                self.image = SimpleITK.Compose(self.t1_smoothned, self.t2_smoothned)
+
+        except:
+            tkMessageBox.showerror("Files not available", "Make sure you've loaded only the pre-processed modalities")
+
+    def onClickMarkSeeds(self):
+        print('marking seeds')
+        self.seeds = [(165, 178, self.sliceNumber),
+                    (98, 165, self.sliceNumber),
+                    (205, 125, self.sliceNumber),
+                    (173, 205, self.sliceNumber)]
+
+        seedMarkedImg = SimpleITK.Image(self.image)
+
+        for seed in self.seeds:
+            seedMarkedImg[seed] = 10000
+        Segmentor.tvFrame = tk.Frame(self)
+        Segmentor.tvFrame.grid(row=0, column=0, columnspan=4, rowspan=5)
+        help.show(seedMarkedImg[:, :, self.sliceNumber], Segmentor.tvFrame)
+
+    def onClickSegement(self, mod, matter):
+        print('segmenting' +mod+ ' ' + matter)
+
+
+
+
 
 
 app = App()
