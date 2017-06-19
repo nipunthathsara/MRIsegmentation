@@ -9,7 +9,7 @@ import string
 class Feed:
 
     def readImage(self, subDir, fileName):
-        filePath = subDir + '/' + fileName + '.mha'
+        filePath = subDir + '/' + fileName + '.mhd'
         try:
             image = SimpleITK.ReadImage(str(filePath))
             return image

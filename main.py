@@ -130,6 +130,8 @@ class Denoiser(tk.Frame):
 
         filenameT1 = "./dataset/mr_T1/patient_109_mr_T1.mhd" #add default jpg url here
         Denoiser.t1_original = SimpleITK.ReadImage(filenameT1)
+        filenameT2 = "./dataset/mr_T2/patient_109_mr_T2.mhd"  # add default jpg url here
+        Denoiser.t2_original = SimpleITK.ReadImage(filenameT2)
         help.show(Denoiser.t1_original[:, :, int(Denoiser.sliceNumber.get())], Denoiser.tvFrame)
 
 
@@ -264,7 +266,7 @@ class Segmentor (tk.Frame):
             elif (str(self.modToSegment.get()) == 'T1 and T2'):
                 # self.canvas = help.show(SimpleITK.Tile(self.t1_smoothned[:, :, self.sliceNumber], self.t2_smoothned[:, :, self.sliceNumber]), Segmentor.tvFrame)
                 self.canvas = help.show(self.t1_smoothned[:, :, self.sliceNumber], Segmentor.tvFrame)#display only one, otherwise frame resizes
-                self.image = SimpleITK.Compose(self.t1_smoothned, self.t2_smoothned)
+                self.image = SimpleITK.Compose(self.t1_smoothned, self.t2_smoothned)#create multi component image, multi values per pixel
 
         except:
             tkMessageBox.showerror("Files not available", "Make sure you've loaded only the pre-processed modalities")
@@ -281,7 +283,11 @@ class Segmentor (tk.Frame):
                           (205, 125, self.sliceNumber),
                           (173, 205, self.sliceNumber)]
 
-        seedMarkedImg = SimpleITK.Image(self.image)#creates a copy
+        if(str(self.modToSegment.get()) == 'T1 and T2'):
+            seedMarkedImg = SimpleITK.Image(self.t2_smoothned)# can't mark on composite image therefore use T1 or T2
+        else:
+            seedMarkedImg = SimpleITK.Image(self.image)# creates a copy
+
 
         for seed in self.graySeeds:
             seedMarkedImg[seed] = 10000
@@ -294,7 +300,19 @@ class Segmentor (tk.Frame):
     def onClickSegement(self, mod, matter):
         if (matter == 'Gray Matter'):
             if (mod == 'T1 and T2'):
-                print('gg')
+                grayMatter = SimpleITK.VectorConfidenceConnected(image1=self.image,
+                                               seedList=self.graySeeds,
+                                               numberOfIterations=1,
+                                               multiplier=0.1,
+                                               replaceValue=self.grayLabel)
+                # smoothnedScaled = SimpleITK.Cast(SimpleITK.RescaleIntensity(self.image), grayMatter.GetPixelID()) #cast T1 or T2 to display along with gray matter
+                smoothnedScaled = SimpleITK.Cast(SimpleITK.RescaleIntensity(self.t2_smoothned), grayMatter.GetPixelID())#can't cast a composite image, instead use t1 or t2
+                Segmentor.tvFrame = tk.Frame(self)
+                Segmentor.tvFrame.grid(row=0, column=0, columnspan=4, rowspan=5)
+                help.show(SimpleITK.LabelOverlay(smoothnedScaled[:, :, self.sliceNumber], grayMatter[:, :, self.sliceNumber]),Segmentor.tvFrame)
+
+
+
             else:
                 # print('segmenting' + mod + ' ' + matter)
                 grayMatter = SimpleITK.ConfidenceConnected(image1=self.image,
