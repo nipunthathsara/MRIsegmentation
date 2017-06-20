@@ -278,10 +278,14 @@ class Segmentor (tk.Frame):
                     (205, 125, self.sliceNumber),
                     (173, 205, self.sliceNumber)]
 
-        self.whiteSeeds = [(165, 178, self.sliceNumber),
-                          (98, 165, self.sliceNumber),
-                          (205, 125, self.sliceNumber),
-                          (173, 205, self.sliceNumber)]
+        # self.whiteSeeds = [(118, 77, self.sliceNumber),
+        #                   (162, 78, self.sliceNumber),
+        #                   (98, 151, self.sliceNumber),
+        #                   (151, 146, self.sliceNumber)]
+        self.whiteSeeds = [(80, 184, self.sliceNumber),
+                           (186, 201, self.sliceNumber),
+                           (118, 77, self.sliceNumber),
+                           (160, 79, self.sliceNumber)]
 
         if(str(self.modToSegment.get()) == 'T1 and T2'):
             seedMarkedImg = SimpleITK.Image(self.t2_smoothned)# can't mark on composite image therefore use T1 or T2
@@ -311,8 +315,6 @@ class Segmentor (tk.Frame):
                 Segmentor.tvFrame.grid(row=0, column=0, columnspan=4, rowspan=5)
                 help.show(SimpleITK.LabelOverlay(smoothnedScaled[:, :, self.sliceNumber], grayMatter[:, :, self.sliceNumber]),Segmentor.tvFrame)
 
-
-
             else:
                 # print('segmenting' + mod + ' ' + matter)
                 grayMatter = SimpleITK.ConfidenceConnected(image1=self.image,
@@ -328,7 +330,19 @@ class Segmentor (tk.Frame):
 
         elif (matter == 'White matter'):
             if (mod == 'T1 and T2'):
-                print('gg')
+                whiteMatter = SimpleITK.VectorConfidenceConnected(image1=self.image,
+                                                                 seedList=self.whiteSeeds,
+                                                                 numberOfIterations=1,
+                                                                 multiplier=0.1,
+                                                                 replaceValue=self.whiteLabel)
+                # smoothnedScaled = SimpleITK.Cast(SimpleITK.RescaleIntensity(self.image), grayMatter.GetPixelID()) #cast T1 or T2 to display along with gray matter
+                smoothnedScaled = SimpleITK.Cast(SimpleITK.RescaleIntensity(self.t2_smoothned),
+                                                 whiteMatter.GetPixelID())  # can't cast a composite image, instead use t1 or t2
+                Segmentor.tvFrame = tk.Frame(self)
+                Segmentor.tvFrame.grid(row=0, column=0, columnspan=4, rowspan=5)
+                help.show(
+                    SimpleITK.LabelOverlay(smoothnedScaled[:, :, self.sliceNumber], whiteMatter[:, :, self.sliceNumber]),
+                    Segmentor.tvFrame)
             else:
                 whiteMatter = SimpleITK.ConfidenceConnected(image1=self.image,
                                                            seedList=self.whiteSeeds,
@@ -341,12 +355,9 @@ class Segmentor (tk.Frame):
                 Segmentor.tvFrame.grid(row=0, column=0, columnspan=4, rowspan=5)
                 help.show(SimpleITK.LabelOverlay(smoothnedScaled[:, :, self.sliceNumber], whiteMatter[:, :, self.sliceNumber]), Segmentor.tvFrame)
 
-
-
-
-
-
-
+        elif (matter == 'White matter'):
+            if (mod == 'T1 and T2'):
+                print('gg')
 
 
 
@@ -360,31 +371,3 @@ app.geometry("1000x530")
 app.mainloop()
 
 #**************end of try
-
-""""filenameT1 = "./dataset/mr_T1/patient_109_mr_T1.mhd"
-filenameT2 = "./dataset/mr_T2/patient_109_mr_T2.mhd"
-
-idxSlice = 26
-labelGrayMatter = 1
-
-imgT1Original = SimpleITK.ReadImage(filenameT1)
-imgT2Original = SimpleITK.ReadImage(filenameT2)
-
-help.sitk_show(SimpleITK.Tile(imgT1Original[:, :, idxSlice],imgT2Original[:, :, idxSlice],(2,1,0))) #give input images in multiple args or as a list, then give display configurations as a tuple
-#input slice number to other axis to get vertical cross sections
-
-
-
-#**************************Smoothing*******************************
-
-#Method 1 : CurvatureFlow
-imgT1Smooth = SimpleITK.CurvatureFlow(image1=imgT1Original,timeStep=0.125,numberOfIterations=5)
-
-imgT2Smooth = SimpleITK.CurvatureFlow(image1=imgT2Original,timeStep=0.125,numberOfIterations=5)
-
-help.sitk_show(SimpleITK.Tile(imgT1Smooth[:, :, idxSlice],
-                         imgT2Smooth[:, :, idxSlice],
-                         (2, 1, 0)))"""""
-
-
-

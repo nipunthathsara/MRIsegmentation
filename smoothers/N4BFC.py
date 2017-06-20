@@ -3,4 +3,4 @@ import numpy
 
 class N4bfc:
     def applyN4BFC(self):
-        return 0
+        return
